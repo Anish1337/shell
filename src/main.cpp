@@ -24,7 +24,7 @@ int main() {
         }
 
         // echo functionality
-        if (input == "echo" || input, starts_with("echo ")) {
+        if (input == "echo" || input.starts_with("echo ")) {
             if (input == "echo") {
                 std::cout << "\n";
             } else {
