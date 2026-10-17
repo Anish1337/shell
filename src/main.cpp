@@ -1,6 +1,14 @@
+#include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <unordered_set>
+
+// function declaration
+std::string find_executable(const std::string& command);
+
 int main() {
 
     // Flush after every std::cout / std:cerr
@@ -40,7 +48,13 @@ int main() {
             if (builtins.contains(command)) {
                 std::cout << command << " is a shell builtin\n";
             } else {
-                std::cout << command << ": not found\n";
+                std::string path = find_executable(command);
+
+                if (!path.empty()) {
+                    std::cout << command << " is " << path << '\n';
+                } else {
+                    std::cout << command << ": not found\n";
+                }
             }
 
             continue;
@@ -50,4 +64,32 @@ int main() {
     }
 
     return 0;
+}
+
+std::string find_executable(const std::string& command) {
+    const char* path_env = std::getenv("PATH");
+
+    if (!path_env) {
+        return "";
+    }
+
+    std::stringstream ss(path_env);
+    std::string directory;
+
+    while (std::getline(ss, directory, ':')) {
+        if (directory.empty()) {
+            directory = ".";
+        }
+
+        std::string full_path = directory + "/" + command;
+
+        struct stat info{};
+
+        if (stat(full_path.c_str(), &info) == 0 && S_ISREG(info.st_mode) &&
+            access(full_path.c_str(), X_OK) == 0) {
+            return full_path;
+        }
+    }
+
+    return "";
 }
