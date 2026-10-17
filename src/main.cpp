@@ -11,7 +11,7 @@ int main() {
         std::getline(std::cin, input);
 
         // exit condition
-        if (input == "exist") {
+        if (input == "exit") {
             break;
         }
 
