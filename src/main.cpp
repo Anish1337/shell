@@ -9,6 +9,12 @@ int main() {
         std::cout << "$ ";
         std::string input;
         std::getline(std::cin, input);
+
+        // exit condition
+        if (input == "exist") {
+            break;
+        }
+
         std::cout << input << ": command not found\n";
     }
     return 0;
